@@ -21,6 +21,10 @@ public class Opcode {
         return opcode;
     }
 
+    /**
+     * Deprecating this since now that time as gone on it seems this data structure is worthless
+     */
+    @Deprecated
     public static class IntToOpcodeMapBuilder {
         private final Map<Integer, Opcode> integerOpcodeMap = new HashMap<>();
         public IntToOpcodeMapBuilder addOpcode(Opcode opcode) {
