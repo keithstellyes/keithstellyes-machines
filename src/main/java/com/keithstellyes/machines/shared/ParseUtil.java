@@ -19,4 +19,28 @@ public class ParseUtil {
     public static int setFlag(int flags, int flag) {
         return flags | flag;
     }
+
+    /**
+     * This is a common parsing operation.
+     *
+     * Given a CharSequence (like a String, we can call this with Strings!),
+     * this will start with an index, and then keep incrementing it for as long as it
+     * stays the same. It returns the first index of the first next char that isn't
+     * the same as the starting. Or, it will return the size of the string if all the
+     * rest are the same as the starting char.
+     *
+     * If the user wants to count the repetitions, merely subtract this result from whatever
+     * index it was given initially.
+     * @param s
+     * @param start
+     * @return
+     */
+    public static int greedyConsumeEqualChars(CharSequence s, int start) {
+        char startingChar = s.charAt(start);
+        while(start < s.length() && s.charAt(start) == startingChar) {
+            start++;
+        }
+
+        return start;
+    }
 }

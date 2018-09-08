@@ -1,5 +1,6 @@
 package com.keithstellyes.machines.lmc;
 
+import com.keithstellyes.machines.shared.MachineUtil;
 import com.keithstellyes.machines.shared.ShortMemoryBuilder;
 import org.junit.Before;
 import org.junit.Test;
@@ -70,14 +71,8 @@ public class Machine_Test {
         // we're done programmaically making the program for the LMC to run //
 
         machine.loadProgram(memoryBuilder.getMemory());
-        int giveUpCounter = 100;
-        while(!machine.isHalted()) {
-            if(giveUpCounter-- == 0) fail();
-            Delta delta = machine.parseInstruction(machine.getCurrentInstruction());
-            delta.apply(machine);
-        }
+        MachineUtil.runMachineUntilHalt(machine, 100);
 
-        System.out.println(giveUpCounter);
         byte[] actualOut = out.toByteArray();
         for(int i = 9; i >= 1; i--) {
             assertEquals(i + '0', actualOut[9 - i]);
@@ -111,11 +106,7 @@ public class Machine_Test {
         int finalInstruction = addInstruction(Machine.BRA, loopBegin);
 
         machine.loadProgram(memoryBuilder.getMemory());
-        int giveUpCounter = 500;
-        while(!machine.isHalted()) {
-            if(giveUpCounter-- == 0) fail();
-            machine.parseInstruction(machine.getCurrentInstruction()).apply(machine);
-        }
+        MachineUtil.runMachineUntilHalt(machine, 500);
 
         final byte[] actualOut = out.toByteArray();
         // the last char of hello world isn't OUTed

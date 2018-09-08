@@ -128,11 +128,10 @@ public class Machine extends com.keithstellyes.machines.shared.Machine {
                 doHalt = true;
                 break;
             case ADD:
-                if(acc + valueAtArgument <= MAX_VALUE) {
-                    newAccValue = acc + valueAtArgument;
-                } else {
+                newAccValue = acc + valueAtArgument;
+                if(newAccValue > MAX_VALUE) {
                     if(mathMode == MATH_MODE.OVERFLOW) {
-                        newAccValue = (acc + valueAtArgument) % (MAX_VALUE + 1);
+                        newAccValue %= MAX_VALUE + 1;
                         newFlags = ParseUtil.setFlag(newFlags, N_FLAG);
                     } else {
                         newAccValue = MAX_VALUE;
@@ -140,11 +139,10 @@ public class Machine extends com.keithstellyes.machines.shared.Machine {
                 }
                 break;
             case SUB:
-                if(acc - valueAtArgument >= MIN_VALUE) {
-                    newAccValue = acc - valueAtArgument;
-                } else {
+                newAccValue = acc - valueAtArgument;
+                if(newAccValue < MIN_VALUE) {
                     if(mathMode == MATH_MODE.OVERFLOW) {
-                        newAccValue = MAX_VALUE + 1 + (acc - valueAtArgument);
+                        newAccValue %= (MAX_VALUE + 1);
                         newFlags = ParseUtil.setFlag(newFlags, N_FLAG);
                     } else {
                         newAccValue = MIN_VALUE;
