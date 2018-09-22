@@ -2,7 +2,7 @@ Implemented:
 
 - Little Man Computer
 - Brainfuck
-- Mano
+- Mano (PDP-8 like)
 
 WIP:
 
