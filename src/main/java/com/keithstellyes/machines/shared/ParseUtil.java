@@ -20,6 +20,10 @@ public class ParseUtil {
         return flags | flag;
     }
 
+    public static int unsetFlag(int flags, int flag) {
+        return flags & ~flag;
+    }
+
     /**
      * This is a common parsing operation.
      *

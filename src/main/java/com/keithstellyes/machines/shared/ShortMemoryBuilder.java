@@ -34,10 +34,18 @@ public class ShortMemoryBuilder {
         return programCounter - 1;
     }
 
+    public int addInstruction(int instruction) {
+        return addInstruction((short) instruction);
+    }
+
     public int addDatum(short datum) {
         memory[datumCounter--] = datum;
 
         return datumCounter + 1;
+    }
+
+    public int addDatum(int datum) {
+        return addDatum((short) datum);
     }
 
     public int addData(short[] data) {
@@ -56,10 +64,18 @@ public class ShortMemoryBuilder {
         return datumCounter + 1;
     }
 
+    public int addData(String data) {
+        return addData(data.toCharArray());
+    }
+
     public int set(int address, short value) {
         memory[address] = value;
 
         return address;
+    }
+
+    public int set(int address, int value) {
+        return set(address, (short) value);
     }
 
     public short[] getMemory() {

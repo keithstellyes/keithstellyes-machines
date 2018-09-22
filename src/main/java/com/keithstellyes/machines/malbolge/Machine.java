@@ -45,34 +45,27 @@ public class Machine extends com.keithstellyes.machines.shared.Machine {
     }
 
     @Override
-    public int getMemoryValue(int address) throws NotImplementedException {
+    public int readMemoryValue(int address) {
         return memory[address];
     }
 
     @Override
-    public void setMemoryValue(int address, int value) {
+    public void writeMemory(int address, int value) {
         memory[address] = value;
     }
 
     @Override
-    public int getRegister(int address) {
+    public int readRegister(int address) {
         return registers[address];
     }
 
     @Override
-    public void setRegister(int address, int value) {
+    public void writeRegister(int address, int value) {
         registers[address] = value;
     }
 
     @Override
-    public int getValue(Location location) throws NotImplementedException {
-        return location.isRegister()
-                ? getRegister(location.getAddress())
-                : getMemoryValue(location.getAddress());
-    }
-
-    @Override
-    public void setValue(Location location, int value) {
+    public void writeValue(Location location, int value) {
         if(location.isRegister()) {
             registers[location.getAddress()] = value;
         } else {
@@ -136,10 +129,10 @@ public class Machine extends com.keithstellyes.machines.shared.Machine {
                 break;
             case OP_ROTR:
                 int rotatedValue = ternaryRotate(dataAtDataPtr);
-                builder.setMemory(registers[DATA_PTR_REG],
+                builder.writeMemory(registers[DATA_PTR_REG],
                         dataAtDataPtr,
                         rotatedValue);
-                builder.setRegister(ACC_REG, registers[ACC_REG], rotatedValue);
+                builder.writeRegister(ACC_REG, registers[ACC_REG], rotatedValue);
                 break;
             case OP_MOVDD:
                 // (after every instruction, dataptr increments by one)
@@ -147,9 +140,9 @@ public class Machine extends com.keithstellyes.machines.shared.Machine {
                 break;
             case OP_CRAZY:
                 int result = crazy(dataAtDataPtr, registers[ACC_REG]);
-                builder.setMemory(registers[dataAtDataPtr], memory[registers[DATA_PTR_REG]],
+                builder.writeMemory(registers[dataAtDataPtr], memory[registers[DATA_PTR_REG]],
                         result);
-                builder.setRegister(ACC_REG, registers[ACC_REG], result);
+                builder.writeRegister(ACC_REG, registers[ACC_REG], result);
                 break;
             case OP_HALT:
                 builder.halt();
@@ -159,9 +152,9 @@ public class Machine extends com.keithstellyes.machines.shared.Machine {
 
         newPc %= MEMORY_COUNT;
 
-        builder.setRegister(DATA_PTR_REG, registers[DATA_PTR_REG], newDataPtr);
-        builder.setRegister(PROGRAM_COUNTER_REG, registers[PROGRAM_COUNTER_REG], newPc);
-        builder.setMemory(instructionToEncrypt, memory[instructionToEncrypt],
+        builder.writeRegister(DATA_PTR_REG, registers[DATA_PTR_REG], newDataPtr);
+        builder.writeRegister(PROGRAM_COUNTER_REG, registers[PROGRAM_COUNTER_REG], newPc);
+        builder.writeMemory(instructionToEncrypt, memory[instructionToEncrypt],
                 encrypt(memory[instructionToEncrypt]));
 
         return builder.build();

@@ -8,7 +8,6 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import static com.keithstellyes.machines.shared.Machine.Delta;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -27,16 +26,16 @@ public class Machine_Test {
 
     @Test
     public void add() {
-        machine.setMemoryValue(0, 1);
+        machine.writeMemory(0, 1);
         machine.parseInstruction(100).apply(machine);
-        assertEquals(1, machine.getMemoryValue(0));
-        assertEquals(1, machine.getRegister(Machine.PROGRAM_COUNTER_REG));
-        assertEquals(1, machine.getRegister(Machine.ACCUMULATOR_REG));
+        assertEquals(1, machine.readMemoryValue(0));
+        assertEquals(1, machine.readRegister(Machine.PROGRAM_COUNTER_REG));
+        assertEquals(1, machine.readRegister(Machine.ACCUMULATOR_REG));
     }
 
     @Test
     public void halt() {
-        machine.setMemoryValue(0, Machine.buildInstruction(Machine.HLT, 0));
+        machine.writeMemory(0, Machine.buildInstruction(Machine.HLT, 0));
         machine.parseInstruction(machine.getCurrentInstruction()).apply(machine);
         assertTrue(machine.isHalted());
     }
@@ -118,7 +117,7 @@ public class Machine_Test {
 
         // make sure the memory values between our code and data sections are still 0.
         for(int i = finalInstruction + 1; i < haltLoc; i++) {
-            assertEquals(0, machine.getMemoryValue(i));
+            assertEquals(0, machine.readMemoryValue(i));
         }
     }
 

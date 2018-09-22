@@ -6,10 +6,7 @@ import com.keithstellyes.machines.shared.exception.NotImplementedException;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
 
 /**
@@ -58,36 +55,30 @@ public class Machine extends com.keithstellyes.machines.shared.Machine {
     }
 
     @Override
-    public int getMemoryValue(int address) throws NotImplementedException {
+    public int readMemoryValue(int address) {
         return memory[address];
     }
 
     @Override
-    public void setMemoryValue(int address, int value) {
+    public void writeMemory(int address, int value) {
         memory[address] = (byte) value;
     }
 
     @Override
-    public int getRegister(int address) {
+    public int readRegister(int address) {
         return registers[address];
     }
 
     @Override
-    public void setRegister(int address, int value) {
+    public void writeRegister(int address, int value) {
         registers[address] = value;
     }
 
     @Override
-    public int getValue(Location location) throws NotImplementedException {
-        return location.isRegister()
-                ? getRegister(location.getAddress()) : getMemoryValue(location.getAddress());
-    }
-
-    @Override
-    public void setValue(Location location, int value) {
+    public void writeValue(Location location, int value) {
         int addr = location.getAddress();
-        if(location.isRegister()) setRegister(addr, value);
-        else setMemoryValue(addr, value);
+        if(location.isRegister()) writeRegister(addr, value);
+        else writeMemory(addr, value);
     }
 
     /**
@@ -121,7 +112,7 @@ public class Machine extends com.keithstellyes.machines.shared.Machine {
                 argument *= -1;
             case INC_VALUE:
                 sum = (dataAtDataPtr + argument) % 256;
-                builder.setMemory(dataPtr, dataAtDataPtr, sum);
+                builder.writeMemory(dataPtr, dataAtDataPtr, sum);
                 break;
             case BRZ:
                 if(dataAtDataPtr == 0) newPc = argument;
@@ -142,8 +133,8 @@ public class Machine extends com.keithstellyes.machines.shared.Machine {
                 break;
         }
 
-        builder.setRegister(PROGRAM_COUNTER_REG, pc, newPc);
-        builder.setRegister(DATA_PTR_REG, dataPtr, newDataPtr);
+        builder.writeRegister(PROGRAM_COUNTER_REG, pc, newPc);
+        builder.writeRegister(DATA_PTR_REG, dataPtr, newDataPtr);
         return builder.build();
     }
 

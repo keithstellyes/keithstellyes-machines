@@ -3,7 +3,6 @@ package com.keithstellyes.machines.lmc;
 import com.keithstellyes.machines.shared.Location;
 import com.keithstellyes.machines.shared.Opcode;
 import com.keithstellyes.machines.shared.ParseUtil;
-import com.keithstellyes.machines.shared.exception.NotImplementedException;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -75,26 +74,18 @@ public class Machine extends com.keithstellyes.machines.shared.Machine {
     }
 
     @Override
-    public int getMemoryValue(int address) {
+    public int readMemoryValue(int address) {
         return memory[address];
     }
 
     @Override
-    public void setMemoryValue(int address, int value) {
+    public void writeMemory(int address, int value) {
         memory[address] = (short) value;
     }
 
-    @Override
-    public int getValue(Location location) {
-        if(location.isRegister()) {
-            return registers[location.getAddress()];
-        }
-
-        return memory[location.getAddress()];
-    }
 
     @Override
-    public void setValue(Location location, int value) {
+    public void writeValue(Location location, int value) {
         if(location.isRegister()) {
             registers[location.getAddress()] = (short) value;
         } else {
@@ -150,10 +141,10 @@ public class Machine extends com.keithstellyes.machines.shared.Machine {
                 }
                 break;
             case STA:
-                builder.setMemory(argument, getMemoryValue(argument), acc);
+                builder.writeMemory(argument, readMemoryValue(argument), acc);
                 break;
             case LDA:
-                builder.setRegister(ACCUMULATOR_REG, acc, getMemoryValue(argument));
+                builder.writeRegister(ACCUMULATOR_REG, acc, readMemoryValue(argument));
                 break;
             case BRA:
                 newPc = argument;
@@ -173,9 +164,9 @@ public class Machine extends com.keithstellyes.machines.shared.Machine {
                 break;
         }
 
-        builder.setRegister(PROGRAM_COUNTER_REG, pc, newPc);
-        builder.setRegister(ACCUMULATOR_REG, acc, newAccValue);
-        builder.setRegister(FLAG_REG, flags, newFlags);
+        builder.writeRegister(PROGRAM_COUNTER_REG, pc, newPc);
+        builder.writeRegister(ACCUMULATOR_REG, acc, newAccValue);
+        builder.writeRegister(FLAG_REG, flags, newFlags);
         if(doHalt) {
             builder.halt();
         }
@@ -228,12 +219,12 @@ public class Machine extends com.keithstellyes.machines.shared.Machine {
     }
 
     @Override
-    public int getRegister(int address) {
+    public int readRegister(int address) {
         return registers[address];
     }
 
     @Override
-    public void setRegister(int address, int value) {
+    public void writeRegister(int address, int value) {
         registers[address] = (short) value;
     }
 }

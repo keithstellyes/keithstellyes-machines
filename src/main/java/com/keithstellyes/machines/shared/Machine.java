@@ -44,23 +44,19 @@ public abstract class Machine {
         this.out = System.out;
     }
 
-    public int getMemoryValue(int address) throws NotImplementedException {
+    public int readMemoryValue(int address) {
         return 0;
     }
 
-    public void setMemoryValue(int address, int value) { }
+    public void writeMemory(int address, int value) { }
 
-    public int getRegister(int address) {
+    public int readRegister(int address) {
         return 0;
     }
 
-    public void setRegister(int address, int value) { }
+    public void writeRegister(int address, int value) { }
 
-    public int getValue(Location location) throws NotImplementedException {
-        throw new NotImplementedException();
-    }
-
-    public void setValue(Location location, int value) { }
+    public void writeValue(Location location, int value) { }
 
     public void output(int value) {
         try {
@@ -70,7 +66,7 @@ public abstract class Machine {
 
     public void input(Location location) {
         try {
-            setValue(location, in.read());
+            writeValue(location, in.read());
         } catch(IOException e) { }
     }
 
@@ -139,26 +135,18 @@ public abstract class Machine {
             private final List<Consumer<Machine>> applyFunctions = new ArrayList<>();
             private final List<Consumer<Machine>> unapplyFunctions = new ArrayList<>();
 
-            public Builder setValue(Location location, int oldValue, int newValue) {
+            public Builder writeMemory(int address, int oldValue, int newValue) {
                 if(oldValue == newValue) return this;
-                applyFunctions.add((m) -> m.setValue(location, newValue));
-                unapplyFunctions.add((m) -> m.setValue(location, oldValue));
+                applyFunctions.add((m) -> m.writeMemory(address, newValue));
+                unapplyFunctions.add((m) -> m.writeMemory(address, oldValue));
 
                 return this;
             }
 
-            public Builder setMemory(int address, int oldValue, int newValue) {
+            public Builder writeRegister(int register, int oldValue, int newValue) {
                 if(oldValue == newValue) return this;
-                applyFunctions.add((m) -> m.setMemoryValue(address, newValue));
-                unapplyFunctions.add((m) -> m.setMemoryValue(address, oldValue));
-
-                return this;
-            }
-
-            public Builder setRegister(int register, int oldValue, int newValue) {
-                if(oldValue == newValue) return this;
-                applyFunctions.add((m) -> m.setRegister(register, newValue));
-                unapplyFunctions.add((m) -> m.setRegister(register, oldValue));
+                applyFunctions.add((m) -> m.writeRegister(register, newValue));
+                unapplyFunctions.add((m) -> m.writeRegister(register, oldValue));
 
                 return this;
             }
